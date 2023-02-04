@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.SceneManagement;
 using TMPro;
 
 public class Player : MonoBehaviour
@@ -9,6 +10,11 @@ public class Player : MonoBehaviour
     public GameObject PlayeWinPanel;
     public List<Button> AllButtons;
     public List<Button> BINGOButtons;
+    public AudioSource winClip;
+    public TMP_Text Player1Name;
+    public TMP_Text Player2Name;   
+    public TMP_Text Winner1Name;
+    public TMP_Text Winner2Name;
 
     private List<Button> rowButtons;
     private List<Button> columnButtons;
@@ -17,6 +23,14 @@ public class Player : MonoBehaviour
 
     bool _currentRowCompleted;
     bool _currentColumnCompleted;
+
+    private void Awake()
+    {
+        Player1Name.text = LevelManager.instance.player1Text;
+        Player2Name.text = LevelManager.instance.player2Text;
+        Winner1Name.text = "Hurray!" + LevelManager.instance.player1Text + "Won The Game";
+        Winner2Name.text = "Hurray!" + LevelManager.instance.player2Text + "Won The Game";
+    }
 
     private void Start()
     {
@@ -88,8 +102,16 @@ public class Player : MonoBehaviour
     {
         if (_BINGOIndex == 5)
         {
+            winClip.Play();
             PlayeWinPanel.SetActive(true);
+            StartCoroutine(RestartLevel());
         }
+    }
+
+    IEnumerator RestartLevel()
+    {
+        yield return new WaitForSeconds(5f);
+        SceneManager.LoadScene(2);
     }
 
     void CheckRowComplete()
